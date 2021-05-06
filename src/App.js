@@ -1,10 +1,28 @@
+import { Button } from '@material-ui/core';
 import React from 'react';
 import './App.css';
-import { db } from './firebase';
+import { auth, db } from './firebase';
 import Post from './Post';
+import SignUpModal from './SignUpModal'
+import SignInModal from './SignInModal'
 
 function App() {
   const [posts, setPosts] = React.useState([])
+  const [user, setUser] = React.useState(null)
+
+  React.useEffect(() => {
+    // this persists the user
+    auth.onAuthStateChanged((authUser) => {
+      if (authUser) {
+        console.log('authUser', authUser)
+        // user has logged in
+        setUser(authUser);
+      } else {
+        // user has logged out
+        setUser(null)
+      }
+    })
+  }, [user])  
 
   React.useEffect(() => {
     db.collection('posts').onSnapshot(snapshot => {
@@ -15,6 +33,10 @@ function App() {
     })
   }, [])
 
+  const handleLogout = () => (
+    auth.signOut()
+  )
+
   return (
     <div className="app">
       <header className="app__header">
@@ -23,6 +45,22 @@ function App() {
           src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png"
           alt="Instagram text-logo"
         />
+
+        {
+          !user ? 
+          (
+            <div className="app__loginContainer">
+              <SignInModal /> 
+              <SignUpModal />
+            </div>    
+          ) : 
+          (
+              <Button variant="contained" onClick={handleLogout}>
+                Log Out
+              </Button>
+          )
+        }
+        
       </header>
       <main>
         <h3>Hello Clever Programmers</h3>
