@@ -5,6 +5,7 @@ import { auth, db } from './firebase';
 import Post from './Post';
 import SignUpModal from './SignUpModal'
 import SignInModal from './SignInModal'
+import ImageUpload from './ImageUpload';
 
 function App() {
   const [posts, setPosts] = React.useState([])
@@ -25,7 +26,7 @@ function App() {
   }, [user])  
 
   React.useEffect(() => {
-    db.collection('posts').onSnapshot(snapshot => {
+    db.collection('posts').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
       setPosts(snapshot.docs.map(doc => ({
           id: doc.id,
           post: doc.data(),
@@ -65,16 +66,23 @@ function App() {
       <main>
         <h3>Hello Clever Programmers</h3>
 
+        <div className="app__post">
+          {
+            posts.map(({id, post}) => (
+            <Post 
+              key={id}
+              username={post.username} 
+              caption={post.caption}
+              imageUrl={post.imageUrl}
+            />
+            ))
+          }
+        </div>
+
         {
-          posts.map(({id, post}) => (
-          <Post 
-            key={id}
-            username={post.username} 
-            caption={post.caption}
-            imageUrl={post.imageUrl}
-          />
-          )
-        )}
+          user?.displayName && <ImageUpload user={user} />
+        }
+
       </main>
     </div>
   );

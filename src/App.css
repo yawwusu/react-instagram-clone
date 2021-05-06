@@ -12,6 +12,14 @@
   border-bottom: 1px solid lightgray;
 }
 
+.app__headerImage {
+  object-fit: contain;
+}
+
 .app__loginContainer {
   display: flex;
+}
+
+.app__post {
+  padding: 1rem;
 }
