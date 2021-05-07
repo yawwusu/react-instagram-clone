@@ -6,10 +6,16 @@ import Post from './Post';
 import SignUpModal from './SignUpModal'
 import SignInModal from './SignInModal'
 import ImageUpload from './ImageUpload';
+import InstagramEmbed from 'react-instagram-embed';
 
 function App() {
   const [posts, setPosts] = React.useState([])
   const [user, setUser] = React.useState(null)
+
+  // React.useEffect(() => {
+  //   if (window.instgrm)
+  //       window.instgrm.Embeds.process();
+  // }, []);
 
   React.useEffect(() => {
     // this persists the user
@@ -64,23 +70,43 @@ function App() {
         
       </header>
       <main>
-        <h3>Hello Clever Programmers</h3>
-
         <div className="app__post">
-          {
-            posts.map(({id, post}) => (
-            <Post 
-              key={id}
-              username={post.username} 
-              caption={post.caption}
-              imageUrl={post.imageUrl}
+          <div className="app__post-left">
+            {
+              posts.map(({id, post}) => (
+              <Post 
+                key={id}
+                postId={id}
+                user={user}
+                username={post.username} 
+                caption={post.caption}
+                imageUrl={post.imageUrl}
+              />
+              ))
+            }
+          </div>
+          <div className="app__post-right">
+            <InstagramEmbed
+              url='https://www.instagram.com/p/B_uf9dmAGPw/'
+              clientAccessToken='123|456'
+              maxWidth={320}
+              hideCaption={false}
+              containerTagName='div'
+              protocol=''
+              injectScript
+              onLoading={() => {}}
+              onSuccess={() => {}}
+              onAfterRender={() => {}}
+              onFailure={() => {}}
             />
-            ))
-          }
+          </div> 
         </div>
 
+      {/* https://www.instagram.com/p/B_uf9dmAGPw/ */}
+
+
         {
-          user?.displayName && <ImageUpload user={user} />
+          !!user && <ImageUpload user={user} />
         }
 
       </main>
